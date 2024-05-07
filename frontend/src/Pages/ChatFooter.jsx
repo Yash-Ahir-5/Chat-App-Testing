@@ -1,14 +1,15 @@
+// ChatFooter.jsx
 import React, { useState } from 'react';
 
 const ChatFooter = ({ socket, users }) => {
   const [message, setMessage] = useState('');
-  const [selectedUser, setSelectedUser] = useState('');
+  const [recipient, setRecipient] = useState('everyone');
 
   const handleSendMessage = (e) => {
     e.preventDefault();
-    console.log(selectedUser);
+    console.log(recipient)
     if (message.trim() && localStorage.getItem('userName')) {
-      if (selectedUser === 'everyone') {
+      if (recipient === 'everyone') {
         socket.emit('message', {
           text: message,
           name: localStorage.getItem('userName'),
@@ -16,16 +17,13 @@ const ChatFooter = ({ socket, users }) => {
           socketID: socket.id,
         });
       } else {
-        const recipientSocketID = users.find(user => user.userName === selectedUser)?.socketID;
-        if (recipientSocketID) {
-          socket.emit('privateMessage', {
-            text: message,
-            name: localStorage.getItem('userName'),
-            id: `${socket.id}${Math.random()}`,
-            socketID: socket.id,
-            recipientSocketID,
-          });
-        }
+        socket.emit('privateMessage', {
+          text: message,
+          name: localStorage.getItem('userName'),
+          id: `${socket.id}${Math.random()}`,
+          socketID: socket.id,
+          recipientID: recipient,
+        });
       }
     }
     setMessage('');
@@ -41,10 +39,10 @@ const ChatFooter = ({ socket, users }) => {
           value={message}
           onChange={(e) => setMessage(e.target.value)}
         />
-        <select value={selectedUser} onChange={(e) => setSelectedUser(e.target.value)}>
+        <select value={recipient} onChange={(e) => setRecipient(e.target.value)}>
           <option value="everyone">Everyone</option>
           {users.map((user) => (
-            <option key={user.socketID} value={user.userName}>
+            <option key={user.socketID} value={user.socketID}>
               {user.userName}
             </option>
           ))}

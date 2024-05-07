@@ -9,16 +9,10 @@ const ChatPage = ({ socket }) => {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    socket.on('messageResponse', (data) => setMessages(prevMessages => [...prevMessages, data]));
+    socket.on('messageResponse', (data) => setMessages([...messages, data]));
     socket.on('newUserResponse', (data) => setUsers(data));
-    socket.on('privateMessage', (data) => setMessages(prevMessages => [...prevMessages, data]));
-    return () => {
-      // Clean up socket listeners to avoid memory leaks
-      socket.off('messageResponse');
-      socket.off('newUserResponse');
-      socket.off('privateMessage');
-    };
-  }, [socket]);
+    socket.on('privateMessageResponse', (data) => { console.log(data), setMessages([...messages, data]) });
+  }, [socket, messages]);
 
   return (
     <div className="chat">

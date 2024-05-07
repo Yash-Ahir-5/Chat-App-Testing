@@ -44,13 +44,23 @@ function initializeSocket(io) {
       socket.on('message', (data) => {
         io.emit('messageResponse', data);
       });
+
+    
   
+      // socket.on('privateMessage', (data) => {
+      //   // Emit the private message only to the specified recipient
+      //   io.to(data.recipientSocketID).emit('messageResponse', data);
+      //   // Optionally, you can emit the message back to the sender as well
+      //   socket.emit('messageResponse', data); // Echo message to sender
+      // });
+
       socket.on('privateMessage', (data) => {
-        // Emit the private message only to the specified recipient
-        io.to(data.recipientSocketID).emit('messageResponse', data);
-        // Optionally, you can emit the message back to the sender as well
-        socket.emit('messageResponse', data); // Echo message to sender
-      });
+        console.log(data);
+        const recipientSocket = data.recipientID;
+        if (recipientSocket) {
+            io.to(recipientSocket).emit('privateMessageResponse', data);
+        }
+    });    
       
       socket.on('newUser', (data) => {
         users.push(data);
