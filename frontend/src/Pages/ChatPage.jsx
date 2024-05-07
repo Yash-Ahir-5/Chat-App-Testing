@@ -9,11 +9,11 @@ const ChatPage = ({ socket }) => {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    socket.on('messageResponse', (data) => setMessages([...messages, data]));
+    socket.on('messageResponse', (data) =>  { setMessages([...messages, data]) });
     socket.on('newUserResponse', (data) => setUsers(data));
-    socket.on('privateMessageResponse', (data) => { console.log(data), setMessages([...messages, data]) });
+    socket.on('privateMessageResponse', (data) => { setMessages([...messages, data]) });
   }, [socket, messages]);
-
+  console.log(messages);
   return (
     <div className="chat">
       <ChatBar socket={socket} />
